@@ -32,42 +32,95 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@SuppressWarnings("unchecked")
 	public IUArrayList(int initialCapacity) {
 		array = (T[])(new Object[initialCapacity]);
-		rear = 0;
+		rear = initialCapacity;
 		modCount = 0;
 	}
 	
 	/** Double the capacity of array */
 	private void expandCapacity() {
+
+		// says this is bad
+		// T[] newArray = (T[])(new Object[array.length * 2]);
+		// for(int i = 0; i < array.length; i++) {
+		// 	newArray[i] = array[i];
+		// }
+		// array = newArray;
+
+		// this is the same but simpler
 		array = Arrays.copyOf(array, array.length*2);
 	}
 
 	@Override
 	public void addToFront(T element) {
 		// TODO 
-		
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		for (int i = rear; i > 0; i--) {
+			array[i] = array[i-1];
+		}
+		array[0] = element;
+		rear++;
+		modCount++;
+
+		// the reason to not just use add(0, element) is because
+		// it just gives more practice
+		// and because arrrays are great with indices,
+		// but ALL other collections are
+		// extremely slow comparatively
 	}
 
 	@Override
 	public void addToRear(T element) {
-		// TODO 
-		
+	
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		add(element);
 	}
 
 	@Override
 	public void add(T element) {
 		// TODO 
-		
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		array[rear] = element;
+		rear++;
+		modCount++;
 	}
 
 	@Override
 	public void addAfter(T element, T target) {
 		// TODO 
-		
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		for (int i = 0; i < rear; i++) {
+			if (array[i].equals(target)) {
+				add(i+1, element);
+				return;
+			}
+		}
+
 	}
 
 	@Override
 	public void add(int index, T element) {
-		// TODO 
+		// test if index is valid, throw exception if not
+		if (index < 0 || index > rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		for (int i = rear; i > index; i--) {
+			array[i] = array[i-1];
+		}
+		array[index] = element;
+		rear++;
+		modCount++;
 		
 	}
 
@@ -86,12 +139,15 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public T remove(T element) {
 		int index = indexOf(element);
+
+		// NOT_FOUND is equal to -1, which indexOf() returns if the element is not found
 		if (index == NOT_FOUND) {
 			throw new NoSuchElementException();
 		}
 		
 		T retVal = array[index];
 		
+		// already given in file, remove(index) works and reduces code-duplication
 		rear--;
 		//shift elements
 		for (int i = index; i < rear; i++) {
@@ -105,8 +161,21 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T remove(int index) {
-		// TODO 
-		return null;
+		if(index < 0 || index >= rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		// had to store the old value to be returned, is object type T
+		T oldVal = array[index];
+
+		for(int i = index; i < rear-1; i++) {
+			array[i] = array[i+1];
+		}
+		array[rear - 1] = null;
+		rear--;
+		modCount++;
+
+		return oldVal;
 	}
 
 	@Override
@@ -142,13 +211,13 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public T first() {
 		// TODO 
-		return null;
+		return array[0];
 	}
 
 	@Override
 	public T last() {
 		// TODO 
-		return null;
+		return array[rear - 1];
 	}
 
 	@Override
@@ -159,13 +228,13 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public boolean isEmpty() {
 		// TODO 
-		return false;
+		return rear == 0;
 	}
 
 	@Override
 	public int size() {
 		// TODO 
-		return 0;
+		return rear;
 	}
 
 	@Override

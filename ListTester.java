@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 public class ListTester {
 	//possible lists that could be tested
 	private static enum ListToUse {
-		goodList, badList, arrayList, singleLinkedList, doubleLinkedList
+		goodList, badList, arrayList, singleLinkedList, doubleLinkedList, IUArrayList
 	};
 	// TODO: THIS IS WHERE YOU CHOOSE WHICH LIST TO TEST
 	private final static ListToUse LIST_TO_USE = ListToUse.goodList;
@@ -141,6 +141,8 @@ public class ListTester {
 		String STRING_A = "A";
 		Integer[] LIST_BA = {ELEMENT_B, ELEMENT_A};
 		String STRING_BA = "BA";
+		Integer[] LIST_AB = {ELEMENT_A, ELEMENT_B};
+		String STRING_AB = "AB";
 
 		//newly constructed empty list
 		testEmptyList(newList, "newList");
@@ -161,14 +163,22 @@ public class ListTester {
 
 		//1-element to 2-element
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA);
-			// added
-		// does the LIST_BA and STRING_BA need to be changed
-		// testTwoElementList(A_addToRearB_AB, "A_addToRearB_AB", LIST_BA, STRING_BA);
-
-
+			// added in part 3 with IUArrayList
+		testTwoElementList(A_addToRearB_AB, "A_addToRearB_AB", LIST_AB, STRING_AB);
+		testTwoElementList(A_addB_AB, "A_addB_AB", LIST_AB, STRING_AB);
+		testTwoElementList(A_add0B_BA, "A_add0B_AB", LIST_BA, STRING_BA);
+		testTwoElementList(A_add1B_AB, "A_add1B_AB", LIST_AB, STRING_AB);
+		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB);
 
 		//1-element to changed 1-element via set()
+		testSingleElementList(B_set0A_A, "B_set0A_A", LIST_A, STRING_A);
+		
 		//2-element to 1-element
+		testSingleElementList(BA_removeFirst_A, "BA_removeFirst_A", LIST_A, STRING_A);
+			// 7 scenario requirement for part 3 completed
+		testSingleElementList(BA_removeFirst_A, "BA_removeFirst_A", LIST_A, STRING_A);
+
+			
 		//2-element to 3-element
 		//2-element to changed 2-element via set()
 		//3-element to 2-element
@@ -204,9 +214,9 @@ public class ListTester {
 		case badList:
 			listToUse = new BadList<Integer>();
 			break;
-//		case arrayList:
-//			listToUse = new IUArrayList<Integer>();
-//			break;
+		case arrayList:
+			listToUse = new IUArrayList<Integer>();
+			break;
 //		case singleLinkedList:
 //			listToUse = new IUSingleLinkedList<Integer>();
 //			break;
@@ -323,6 +333,80 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> A_addToFrontB_BA = () -> A_addToFrontB_BA();
+
+	/** Scenario: [A] -> addToRear(B) -> [A,B] 
+	 * @return [A,B] after addToRear(B)
+	 */
+	private IndexedUnsortedList<Integer> A_addToRearB_AB() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.addToRear(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_addToRearB_AB = () -> A_addToRearB_AB();
+
+	/** Scenario: [A] -> add(B) -> [A,B] 
+	 * @return [A,B] after add(B)
+	 */
+	private IndexedUnsortedList<Integer> A_addB_AB() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.add(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_addB_AB = () -> A_addB_AB();
+
+	/** Scenario: [A] -> add(0, B) -> [B,A] 
+	 * @return [B,A] after add(0, B)
+	 */
+	private IndexedUnsortedList<Integer> A_add0B_BA() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.add(0, ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_add0B_BA = () -> A_add0B_BA();
+
+	/** Scenario: [A] -> add(1, B) -> [A,B] 
+	 * @return [A,B] after add(1, B)
+	 */
+	private IndexedUnsortedList<Integer> A_add1B_AB() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.add(1, ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_add1B_AB = () -> A_add1B_AB();
+	
+	
+	/** Scenario: [A] -> addAfter(B, A) -> [A,B] 
+	 * @return [A,B] after addAfter(B,A)
+	 */
+	private IndexedUnsortedList<Integer> A_addAfterBA_AB() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.addAfter(ELEMENT_B, ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> A_addAfterBA_AB = () -> A_addAfterBA_AB();
+	
+	/** Scenario: [B] -> set(0, A) -> [A] 
+	 * @return [A] after set(0,A)
+	 */
+	private IndexedUnsortedList<Integer> B_set0A_A() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.removeFirst();
+		list.add(ELEMENT_B);
+		list.set(0, ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> B_set0A_A = () -> B_set0A_A();
+
+	/** Scenario: [B, A] -> removeFirst() -> [A] 
+	 * @return [A] after removeFirst()
+	 */
+	private IndexedUnsortedList<Integer> BA_removeFirst_A() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.addToFront(ELEMENT_B);
+		list.removeFirst();
+		return list;
+	}
+	private Scenario<Integer> BA_removeFirst_A = () -> BA_removeFirst_A();
 
 	/////////////////////////////////
 	//XXX Tests for 0-element list
