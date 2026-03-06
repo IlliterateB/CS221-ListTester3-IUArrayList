@@ -17,10 +17,10 @@ import java.util.NoSuchElementException;
 public class ListTester {
 	//possible lists that could be tested
 	private static enum ListToUse {
-		goodList, badList, arrayList, singleLinkedList, doubleLinkedList, IUArrayList
+		goodList, badList, arrayList, singleLinkedList, doubleLinkedList 
 	};
 	// TODO: THIS IS WHERE YOU CHOOSE WHICH LIST TO TEST
-	private final static ListToUse LIST_TO_USE = ListToUse.goodList;
+	private final static ListToUse LIST_TO_USE = ListToUse.arrayList;
 
 	// possible results expected in tests
 	private enum Result {
@@ -176,7 +176,7 @@ public class ListTester {
 		//2-element to 1-element
 		testSingleElementList(BA_removeFirst_A, "BA_removeFirst_A", LIST_A, STRING_A);
 			// 7 scenario requirement for part 3 completed
-		testSingleElementList(BA_removeFirst_A, "BA_removeFirst_A", LIST_A, STRING_A);
+		testSingleElementList(AB_removeLast_A, "AB_removeLast_A", LIST_A, STRING_A);
 
 			
 		//2-element to 3-element
@@ -407,6 +407,17 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> BA_removeFirst_A = () -> BA_removeFirst_A();
+
+	/** Scenario: [A, B] -> removeLast() -> [A] 
+	 * @return [A] after removeLast()
+	 */
+	private IndexedUnsortedList<Integer> AB_removeLast_A() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.addToRear(ELEMENT_B);
+		list.removeLast();
+		return list;
+	}
+	private Scenario<Integer> AB_removeLast_A = () -> AB_removeLast_A();
 
 	/////////////////////////////////
 	//XXX Tests for 0-element list
